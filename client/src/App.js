@@ -1,9 +1,10 @@
 import React, { useState } from "react";
 import './App.css';
+import { FaBold, FaItalic, FaListUl, FaImage, FaPaperPlane } from 'react-icons/fa';
 
 const App = () => {
   const [data, setData] = useState([]);
-  const [title, setTitle] = useState(''); // State for title input
+  const [title, setTitle] = useState('');
 
   const toggleStyle = (command) => {
     document.execCommand(command, false, null);
@@ -15,7 +16,6 @@ const App = () => {
       type: type,
       content: type === "image" ? "" : "Editable text",
       attributes: {
-        type: type,
         size: type === "paragraph" ? 'p' : size,
         bold: false,
         italic: false,
@@ -31,49 +31,49 @@ const App = () => {
     setData(updatedData);
   };
 
-  // Send the entire content object to the API
   const handleSubmit = async () => {
     const blogPost = {
-      title: title, // Use the title state
-      content: data.map(element => {
-        if (element.type === "image" && element.content) { // Only include if the image content is present
-          return `<img src="${element.content}" alt="User added" />`;
-        } else if (element.type === "header" || element.type === "paragraph") {
-          return `<${element.attributes.size}>${element.content}</${element.attributes.size}>`;
-        } else if (element.type === "list") {
-          const listItems = element.list.map(item => `<li>${item}</li>`).join('');
-          return `<${element.attributes.size}>${listItems}</${element.attributes.size}>`;
-        }
-        return ''; // For unrecognized types, return an empty string
-      }).join('\n'),
+        title: title,
+        content: data.map(element => {
+            if (element.type === "image" && element.content) {
+                return `<img src="${element.content}" alt="User added" />`;
+            } else if (element.type === "header" || element.type === "paragraph") {
+                return `<${element.attributes.size}>${element.content}</${element.attributes.size}>`;
+            } else if (element.type === "list") {
+                const listItems = element.list.map(item => `<li>${item}</li>`).join('');
+                return `<ul>${listItems}</ul>`;
+            }
+            return '';
+        }).join('\n'),
     };
-  
-    // Check if the blog post is valid
+
+    console.log('Submitting blog post:', blogPost); // Log the blog post object
+
     if (!blogPost.title || !blogPost.content) {
-      alert('Title and content are required');
-      return;
+        alert('Title and content are required');
+        return;
     }
-  
+
     try {
-      const response = await fetch('http://localhost:5000/api/blog', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(blogPost),
-      });
-  
-      if (!response.ok) {
-        throw new Error('Network response was not ok');
-      }
-  
-      const responseData = await response.json();
-      console.log('Blog post created successfully:', responseData);
+        const response = await fetch('http://localhost:5000/api/blog', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(blogPost),
+        });
+
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+
+        const responseData = await response.json();
+        console.log('Blog post created successfully:', responseData);
     } catch (error) {
-      console.error('Error creating blog post:', error);
+        console.error('Error creating blog post:', error);
     }
-  };
-  
+};
+
 
   return (
     <div className="app">
@@ -81,40 +81,43 @@ const App = () => {
         type="text"
         placeholder="Enter Blog Title"
         value={title}
-        onChange={(e) => setTitle(e.target.value)} // Update title state on input change
+        onChange={(e) => setTitle(e.target.value)}
+        className="title-input"
       />
 
       <div className="toolbar">
-        <button onClick={() => toggleStyle("bold")}>Bold</button>
-        <button onClick={() => toggleStyle("italic")}>Italic</button>
+        <button onClick={() => toggleStyle("bold")} className="toolbar-button">
+          <FaBold />
+        </button>
+        <button onClick={() => toggleStyle("italic")} className="toolbar-button">
+          <FaItalic />
+        </button>
 
-        <select onChange={(e) => handleAddElement("header", e.target.value)} defaultValue="">
-          <option value="" disabled>Select Heading</option>
+        <select onChange={(e) => handleAddElement("header", e.target.value)} defaultValue="" className="heading-select">
+          <option value="p">Paragraph</option>
           <option value="h1">H1</option>
           <option value="h2">H2</option>
           <option value="h3">H3</option>
         </select>
 
-        <button onClick={() => handleAddElement("paragraph")}>Add Paragraph</button>
+        <button onClick={() => handleAddElement("list", "ul")} className="toolbar-button">
+          <FaListUl />
+        </button>
 
-        <select onChange={(e) => handleAddElement("list", e.target.value)} defaultValue="">
-          <option value="" disabled>Select List Type</option>
-          <option value="ul">Unordered List</option>
-          <option value="ol">Ordered List</option>
-        </select>
+        <button onClick={() => handleAddElement("image")} className="toolbar-button">
+          <FaImage />
+        </button>
 
-        <button onClick={() => handleAddElement("image")}>Add Image</button>
-
-        <button onClick={handleSubmit} disabled={data.length === 0 || title === ''}>
-          Send All Content
+        <button onClick={handleSubmit} disabled={data.length === 0 || title === ''} className="toolbar-button send-button">
+          Save <FaPaperPlane />
         </button>
       </div>
 
-      <div className="content" style={{ border: "1px solid #ccc", padding: "10px" }}>
+      <div className="content">
         {data.map((element, index) => {
           if (element.type === "image") {
             return (
-              <div key={element.id}>
+              <div key={element.id} className="image-container">
                 <input
                   type="text"
                   placeholder="Enter image URL"
@@ -124,23 +127,22 @@ const App = () => {
                   <img
                     src={element.content}
                     alt="User added"
-                    style={{ width: "100%", height: "auto", marginBottom: "10px" }}
+                    className="image-preview"
                   />
                 )}
               </div>
             );
           } else if (element.type === "list") {
-            const ListTag = element.attributes.size;
             return (
-              <ListTag
+              <ul
                 key={element.id}
                 contentEditable
                 suppressContentEditableWarning={true}
                 onBlur={(e) => handleTextChange(index, e.currentTarget.innerHTML)}
-                style={{ marginBottom: "10px", fontWeight: "normal" }}
+                className="list"
               >
                 <li>Type here</li>
-              </ListTag>
+              </ul>
             );
           } else {
             const Tag = element.attributes.size;
@@ -150,19 +152,7 @@ const App = () => {
                 contentEditable
                 suppressContentEditableWarning={true}
                 onBlur={(e) => handleTextChange(index, e.currentTarget.textContent)}
-                style={{
-                  fontWeight: element.attributes.bold ? "bold" : "normal",
-                  fontStyle: element.attributes.italic ? "italic" : "normal",
-                  fontSize:
-                    element.attributes.size === "h1"
-                      ? "32px"
-                      : element.attributes.size === "h2"
-                      ? "24px"
-                      : element.attributes.size === "h3"
-                      ? "20px"
-                      : "16px",
-                  marginBottom: "10px",
-                }}
+                className="editable-text"
               >
                 {element.content}
               </Tag>

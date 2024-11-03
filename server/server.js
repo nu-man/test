@@ -1,6 +1,5 @@
 const express = require('express');
 const mongoose = require('mongoose');
-const bodyParser = require('body-parser');
 const cors = require('cors');
 
 const BlogPostModel = require('./BlogPost'); // Adjust path as needed
@@ -10,7 +9,7 @@ const PORT = process.env.PORT || 5000;
 
 // Middleware
 app.use(cors());
-app.use(bodyParser.json());
+app.use(express.json());
 
 // MongoDB connection
 mongoose.connect('mongodb+srv://mohdnuman198:numan@test.fkrtk.mongodb.net/?retryWrites=true&w=majority&appName=test', {
@@ -26,20 +25,20 @@ mongoose.connect('mongodb+srv://mohdnuman198:numan@test.fkrtk.mongodb.net/?retry
 
 // Endpoint to create a new blog post
 app.post('/api/blog', async (req, res) => {
+  console.log('Received data:', req.body); // Log incoming data
   try {
     const { title, content, image, tags } = req.body;
 
-    // Create a new blog post object with default values
     const newBlogPost = new BlogPostModel({
-      title: title || "Untitled",  // Default title if none provided
-      content: content || "",       // Default to empty content
-      image: image || null,         // Default to null if no image
-      tags: tags || [],             // Default to an empty array if tags not provided
+      title: title || "Untitled",
+      content: content || "",
+      image: image || null,
+      tags: tags || [],
     });
 
-    // Save the blog post to the database
     const savedBlogPost = await newBlogPost.save();
-    res.status(201).json(savedBlogPost); // Respond with the created blog post
+    console.log('Saved blog post:', savedBlogPost); // Log saved data
+    res.status(201).json(savedBlogPost);
   } catch (error) {
     console.error('Error saving blog post:', error);
     res.status(500).json({ error: 'Failed to save blog post', details: error.message });

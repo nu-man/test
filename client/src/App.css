@@ -1,87 +1,108 @@
-/* App.css */
+/* General App Styling */
+.app {
+  font-family: Arial, sans-serif;
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+}
 
-body {
-    font-family: Arial, sans-serif;
-    margin: 0;
-    padding: 20px;
-    background-color: #f4f4f4;
-  }
-  
-  h2 {
-    color: #333;
-  }
-  
-  h3, h4 {
-    color: #555;
-  }
-  
-  button {
-    padding: 10px 15px;
-    margin: 5px;
-    border: none;
-    border-radius: 5px;
-    background-color: #007bff;
-    color: white;
-    cursor: pointer;
-    transition: background-color 0.3s;
-  }
-  
-  button:hover {
-    background-color: #0056b3;
-  }
-  
-  input[type="text"], select {
-    padding: 10px;
-    margin: 5px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    width: 100%;
-    box-sizing: border-box;
-  }
-  
-  input[type="text"]:focus, select:focus {
-    border-color: #007bff;
-    outline: none;
-  }
-  
-  ul {
-    padding-left: 20px;
-    list-style-type: disc;
-  }
-  
-  ul li {
-    margin: 5px 0;
-  }
-  
-  .content {
-    background-color: white;
-    border: 1px solid #ddd;
-    border-radius: 5px;
-    padding: 15px;
-    margin-top: 20px;
-  }
-  
-  .content h1,
-  .content h2,
-  .content h3,
-  .content p {
-    margin: 0;
-    padding: 5px 0;
-  }
-  
-  .content h1 {
-    font-size: 1.5em;
-  }
-  
-  .content h2 {
-    font-size: 1.25em;
-  }
-  
-  .content h3 {
-    font-size: 1.1em;
-  }
-  
-  .content p {
-    font-size: 1em;
-  }
-  
+.title-input {
+  width: 100%;
+  padding: 10px;
+  font-size: 1.2em;
+  margin-bottom: 20px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+}
+
+/* Toolbar Styling */
+.toolbar {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.toolbar-button {
+  background-color: #f0f0f0;
+  border: 1px solid #ddd;
+  padding: 10px;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.toolbar-button:hover {
+  background-color: #e0e0e0;
+}
+
+.heading-select {
+  padding: 8px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.send-button {
+  background-color: #007bff;
+  color: white;
+  border-radius: 50%;
+}
+
+.send-button:hover {
+  background-color: #0056b3;
+}
+
+/* Content Area Styling */
+.content {
+  border: 1px solid #ddd;
+  padding: 15px;
+  border-radius: 5px;
+  background-color: #fafafa;
+}
+
+.image-container {
+  margin-bottom: 20px;
+}
+
+.image-preview {
+  max-width: 100%;
+  height: auto;
+  margin-top: 10px;
+}
+
+/* Text and Header Styles */
+h1 {
+  font-size: 2em;
+  font-weight: bold;
+  margin: 15px 0;
+}
+
+h2 {
+  font-size: 1.75em;
+  font-weight: bold;
+  margin: 15px 0;
+}
+
+h3 {
+  font-size: 1.5em;
+  font-weight: bold;
+  margin: 15px 0;
+}
+
+p {
+  font-size: 1em;
+  margin: 10px 0;
+}
+
+/* List Styling */
+.list {
+  padding-left: 20px;
+  margin-bottom: 10px;
+  font-size: 1em;
+}
+
+.editable-text {
+  margin-bottom: 15px;
+  padding: 5px;
+}
