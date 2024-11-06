@@ -1,51 +1,36 @@
-const express = require('express');
-const mongoose = require('mongoose');
-const cors = require('cors');
-
-const BlogPostModel = require('./BlogPost'); // Adjust path as needed
+import express from 'express';
+import mongoose from 'mongoose';
+import bodyParser from 'body-parser';
+import cors from 'cors';
+import blogRoutes from './routes/blog.js';
 
 const app = express();
-const PORT = process.env.PORT || 5000;
+const port = 5000;
 
 // Middleware
 app.use(cors());
-app.use(express.json());
+app.use(bodyParser.json());
 
-// MongoDB connection
-mongoose.connect('mongodb+srv://mohdnuman198:numan@test.fkrtk.mongodb.net/?retryWrites=true&w=majority&appName=test', {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-})
-.then(() => {
-  console.log('Connected to MongoDB successfully.');
-})
-.catch((error) => {
-  console.error('MongoDB connection error:', error);
-});
-
-// Endpoint to create a new blog post
-app.post('/api/blog', async (req, res) => {
-  console.log('Received data:', req.body); // Log incoming data
+// Connect to MongoDB (replace with your MongoDB URI)
+const connectDB = async () => {
   try {
-    const { title, content, image, tags } = req.body;
-
-    const newBlogPost = new BlogPostModel({
-      title: title || "Untitled",
-      content: content || "",
-      image: image || null,
-      tags: tags || [],
-    });
-
-    const savedBlogPost = await newBlogPost.save();
-    console.log('Saved blog post:', savedBlogPost); // Log saved data
-    res.status(201).json(savedBlogPost);
+    await mongoose.connect(
+      'mongodb+srv://mohdnuman198:numan@test.fkrtk.mongodb.net/?retryWrites=true&w=majority&appName=test',
+      { useNewUrlParser: true, useUnifiedTopology: true }
+    );
+    console.log('MongoDB connected');
   } catch (error) {
-    console.error('Error saving blog post:', error);
-    res.status(500).json({ error: 'Failed to save blog post', details: error.message });
+    console.error('Error connecting to MongoDB:', error.message);
+    process.exit(1); // Exit the app if MongoDB connection fails
   }
-});
+};
+
+connectDB();
+
+// Use the blog routes
+app.use('/api/blogs', blogRoutes);
 
 // Start the server
-app.listen(PORT, () => {
-  console.log(`Server is running on http://localhost:${PORT}`);
+app.listen(port, () => {
+  console.log(`Server running on http://localhost:${port}`);
 });

@@ -1,167 +1,122 @@
-import React, { useState } from "react";
-import './App.css';
-import { FaBold, FaItalic, FaListUl, FaImage, FaPaperPlane } from 'react-icons/fa';
+import React, { useState } from 'react';
+import ReactQuill from 'react-quill';
+import 'react-quill/dist/quill.snow.css';
 
-const App = () => {
-  const [data, setData] = useState([]);
-  const [title, setTitle] = useState('');
+function App() {
+  const [blogData, setBlogData] = useState({
+    title: '',
+    coverImageSrc: '',
+    content: '',
+    summary: '',
+    tags: [],
+    categories: [],
+    isPublished: false,
+    publishedAt: new Date(),
+  });
 
-  const toggleStyle = (command) => {
-    document.execCommand(command, false, null);
+  // Handler to update blog data
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setBlogData((prevState) => ({
+      ...prevState,
+      [name]: value,
+    }));
   };
 
-  const handleAddElement = (type, size = "p") => {
-    const newElement = {
-      id: Date.now(),
-      type: type,
-      content: type === "image" ? "" : "Editable text",
-      attributes: {
-        size: type === "paragraph" ? 'p' : size,
-        bold: false,
-        italic: false,
-      },
-      list: type === "list" ? [] : undefined,
-    };
-    setData([...data, newElement]);
+  // For tags and categories (to handle comma-separated input)
+  const handleArrayChange = (e, field) => {
+    const { value } = e.target;
+    setBlogData((prevState) => ({
+      ...prevState,
+      [field]: value.split(','),
+    }));
   };
 
-  const handleTextChange = (index, newText) => {
-    const updatedData = [...data];
-    updatedData[index].content = newText;
-    setData(updatedData);
-  };
-
-  const handleSubmit = async () => {
-    const blogPost = {
-        title: title,
-        content: data.map(element => {
-            if (element.type === "image" && element.content) {
-                return `<img src="${element.content}" alt="User added" />`;
-            } else if (element.type === "header" || element.type === "paragraph") {
-                return `<${element.attributes.size}>${element.content}</${element.attributes.size}>`;
-            } else if (element.type === "list") {
-                const listItems = element.list.map(item => `<li>${item}</li>`).join('');
-                return `<ul>${listItems}</ul>`;
-            }
-            return '';
-        }).join('\n'),
-    };
-
-    console.log('Submitting blog post:', blogPost); // Log the blog post object
-
-    if (!blogPost.title || !blogPost.content) {
-        alert('Title and content are required');
-        return;
-    }
+  // Handle form submission
+  const handleSubmit = async (e) => {
+    e.preventDefault();
 
     try {
-        const response = await fetch('http://localhost:5000/api/blog', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(blogPost),
-        });
+      const response = await fetch('http://localhost:5000/api/blogs/create', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(blogData),
+      });
 
-        if (!response.ok) {
-            throw new Error('Network response was not ok');
-        }
+      if (!response.ok) {
+        throw new Error('Failed to create blog post');
+      }
 
-        const responseData = await response.json();
-        console.log('Blog post created successfully:', responseData);
+      const data = await response.json();
+      console.log('Blog created successfully:', data);
+
+      // Optionally reset the form
+      setBlogData({
+        title: '',
+        coverImageSrc: '',
+        content: '',
+        summary: '',
+        tags: [],
+        categories: [],
+        isPublished: false,
+        publishedAt: new Date(),
+      });
     } catch (error) {
-        console.error('Error creating blog post:', error);
+      console.error('Error:', error);
     }
-};
-
+  };
 
   return (
-    <div className="app">
-      <input
-        type="text"
-        placeholder="Enter Blog Title"
-        value={title}
-        onChange={(e) => setTitle(e.target.value)}
-        className="title-input"
-      />
-
-      <div className="toolbar">
-        <button onClick={() => toggleStyle("bold")} className="toolbar-button">
-          <FaBold />
-        </button>
-        <button onClick={() => toggleStyle("italic")} className="toolbar-button">
-          <FaItalic />
-        </button>
-
-        <select onChange={(e) => handleAddElement("header", e.target.value)} defaultValue="" className="heading-select">
-          <option value="p">Paragraph</option>
-          <option value="h1">H1</option>
-          <option value="h2">H2</option>
-          <option value="h3">H3</option>
-        </select>
-
-        <button onClick={() => handleAddElement("list", "ul")} className="toolbar-button">
-          <FaListUl />
-        </button>
-
-        <button onClick={() => handleAddElement("image")} className="toolbar-button">
-          <FaImage />
-        </button>
-
-        <button onClick={handleSubmit} disabled={data.length === 0 || title === ''} className="toolbar-button send-button">
-          Save <FaPaperPlane />
-        </button>
-      </div>
-
-      <div className="content">
-        {data.map((element, index) => {
-          if (element.type === "image") {
-            return (
-              <div key={element.id} className="image-container">
-                <input
-                  type="text"
-                  placeholder="Enter image URL"
-                  onBlur={(e) => handleTextChange(index, e.target.value)}
-                />
-                {element.content && (
-                  <img
-                    src={element.content}
-                    alt="User added"
-                    className="image-preview"
-                  />
-                )}
-              </div>
-            );
-          } else if (element.type === "list") {
-            return (
-              <ul
-                key={element.id}
-                contentEditable
-                suppressContentEditableWarning={true}
-                onBlur={(e) => handleTextChange(index, e.currentTarget.innerHTML)}
-                className="list"
-              >
-                <li>Type here</li>
-              </ul>
-            );
-          } else {
-            const Tag = element.attributes.size;
-            return (
-              <Tag
-                key={element.id}
-                contentEditable
-                suppressContentEditableWarning={true}
-                onBlur={(e) => handleTextChange(index, e.currentTarget.textContent)}
-                className="editable-text"
-              >
-                {element.content}
-              </Tag>
-            );
-          }
-        })}
-      </div>
+    <div>
+      <h1>Create Blog Post</h1>
+      <form onSubmit={handleSubmit}>
+        <input
+          type="text"
+          name="title"
+          placeholder="Title"
+          value={blogData.title}
+          onChange={handleChange}
+        />
+        <input
+          type="text"
+          name="coverImageSrc"
+          placeholder="Cover Image URL"
+          value={blogData.coverImageSrc}
+          onChange={handleChange}
+        />
+        <textarea
+          name="summary"
+          placeholder="Summary"
+          value={blogData.summary}
+          onChange={handleChange}
+        />
+        <input
+          type="text"
+          name="tags"
+          placeholder="Tags (comma separated)"
+          value={blogData.tags.join(',')}
+          onChange={(e) => handleArrayChange(e, 'tags')}
+        />
+        <input
+          type="text"
+          name="categories"
+          placeholder="Categories (comma separated)"
+          value={blogData.categories.join(',')}
+          onChange={(e) => handleArrayChange(e, 'categories')}
+        />
+        <div>
+          <ReactQuill
+            theme="snow"
+            value={blogData.content}
+            onChange={(value) => setBlogData({ ...blogData, content: value })}
+          />
+        </div>
+        <button type="submit">Submit</button>
+      </form>
     </div>
   );
-};
+}
 
 export default App;
