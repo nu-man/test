@@ -1,108 +1,53 @@
-/* General App Styling */
-.app {
-  font-family: Arial, sans-serif;
-  max-width: 800px;
+.app-container {
+  max-width: 700px;
   margin: 0 auto;
   padding: 20px;
+  font-family: Arial, sans-serif;
 }
 
-.title-input {
-  width: 100%;
-  padding: 10px;
-  font-size: 1.2em;
-  margin-bottom: 20px;
-  border: 1px solid #ddd;
-  border-radius: 5px;
-}
-
-/* Toolbar Styling */
-.toolbar {
-  display: flex;
-  gap: 10px;
-  margin-bottom: 20px;
-}
-
-.toolbar-button {
-  background-color: #f0f0f0;
-  border: 1px solid #ddd;
-  padding: 10px;
-  border-radius: 50%;
-  cursor: pointer;
-  transition: background-color 0.3s;
-}
-
-.toolbar-button:hover {
-  background-color: #e0e0e0;
-}
-
-.heading-select {
-  padding: 8px;
-  border: 1px solid #ddd;
-  border-radius: 5px;
-  cursor: pointer;
-  transition: background-color 0.3s;
-}
-
-.send-button {
-  background-color: #007bff;
-  color: white;
-  border-radius: 50%;
-}
-
-.send-button:hover {
-  background-color: #0056b3;
-}
-
-/* Content Area Styling */
-.content {
-  border: 1px solid #ddd;
-  padding: 15px;
-  border-radius: 5px;
-  background-color: #fafafa;
-}
-
-.image-container {
-  margin-bottom: 20px;
-}
-
-.image-preview {
-  max-width: 100%;
-  height: auto;
-  margin-top: 10px;
-}
-
-/* Text and Header Styles */
 h1 {
-  font-size: 2em;
-  font-weight: bold;
-  margin: 15px 0;
+  text-align: center;
+  color: #333;
+  margin-bottom: 20px;
 }
 
-h2 {
-  font-size: 1.75em;
-  font-weight: bold;
-  margin: 15px 0;
+.blog-form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
 }
 
-h3 {
-  font-size: 1.5em;
-  font-weight: bold;
-  margin: 15px 0;
+.blog-form input[type="text"],
+.blog-form textarea {
+  padding: 10px;
+  font-size: 16px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  width: 100%;
 }
 
-p {
-  font-size: 1em;
-  margin: 10px 0;
+.blog-form textarea {
+  resize: vertical;
+  min-height: 100px;
 }
 
-/* List Styling */
-.list {
-  padding-left: 20px;
-  margin-bottom: 10px;
-  font-size: 1em;
+.editor-container {
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  padding: 10px;
 }
 
-.editable-text {
-  margin-bottom: 15px;
-  padding: 5px;
+button[type="submit"] {
+  padding: 10px;
+  font-size: 18px;
+  color: #fff;
+  background-color: #007bff;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+button[type="submit"]:hover {
+  background-color: #0056b3;
 }

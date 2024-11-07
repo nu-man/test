@@ -1,11 +1,13 @@
 import React, { useState } from 'react';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
+import './App.css';
 
 function App() {
   const [blogData, setBlogData] = useState({
     title: '',
     coverImageSrc: '',
+    author: '',
     content: '',
     summary: '',
     tags: [],
@@ -52,10 +54,11 @@ function App() {
       const data = await response.json();
       console.log('Blog created successfully:', data);
 
-      // Optionally reset the form
+      // Reset the form fields
       setBlogData({
         title: '',
         coverImageSrc: '',
+        author: '',
         content: '',
         summary: '',
         tags: [],
@@ -69,9 +72,9 @@ function App() {
   };
 
   return (
-    <div>
+    <div className="app-container">
       <h1>Create Blog Post</h1>
-      <form onSubmit={handleSubmit}>
+      <form className="blog-form" onSubmit={handleSubmit}>
         <input
           type="text"
           name="title"
@@ -84,6 +87,13 @@ function App() {
           name="coverImageSrc"
           placeholder="Cover Image URL"
           value={blogData.coverImageSrc}
+          onChange={handleChange}
+        />
+        <input
+          type="text"
+          name="author"
+          placeholder="Author"
+          value={blogData.author}
           onChange={handleChange}
         />
         <textarea
@@ -106,7 +116,7 @@ function App() {
           value={blogData.categories.join(',')}
           onChange={(e) => handleArrayChange(e, 'categories')}
         />
-        <div>
+        <div className="editor-container">
           <ReactQuill
             theme="snow"
             value={blogData.content}
